@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پی‌لینکر - مدیریت لینک پرداخت</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirfont@v30.1.0/dist/font-face.css">
+    <style>
+        * {
+            font-family: 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        body {
+            direction: rtl;
+            text-align: right;
+        }
+        .english-number {
+            direction: ltr;
+            display: inline-block;
+        }
+        input[type="email"],
+        input[type="tel"],
+        input[dir="ltr"] {
+            direction: ltr;
+            text-align: left;
+        }
+        .space-x-reverse > * + * {
+            margin-right: 0.75rem;
+            margin-left: 0;
+        }
+        .space-x-reverse > *:first-child {
+            margin-right: 0;
+        }
+        table th,
+        table td {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel" src="static/app.js"></script>
+</body>
+</html>
