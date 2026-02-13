@@ -97,6 +97,17 @@ const apiService = {
         });
     },
 
+    async resetPassword(email, newPassword, newPassword2) {
+        return this.request('/auth/reset-password/', {
+            method: 'POST',
+            body: JSON.stringify({
+                email,
+                new_password: newPassword,
+                new_password2: newPassword2,
+            }),
+        });
+    },
+
     async getProfile() {
         return this.request('/auth/profile/');
     },
@@ -316,6 +327,12 @@ function LoginForm({ onSwitch }) {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showReset, setShowReset] = useState(false);
+    const [resetEmail, setResetEmail] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [newPassword2, setNewPassword2] = useState('');
+    const [resetLoading, setResetLoading] = useState(false);
+    const [resetMessage, setResetMessage] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -331,6 +348,33 @@ function LoginForm({ onSwitch }) {
         }
     };
 
+    const handleResetPassword = async (e) => {
+        e.preventDefault();
+        setError('');
+        setResetMessage('');
+
+        if (newPassword !== newPassword2) {
+            setError('رمزهای عبور یکسان نیستند.');
+            return;
+        }
+
+        setResetLoading(true);
+        try {
+            await apiService.resetPassword(resetEmail, newPassword, newPassword2);
+            setResetMessage('رمز عبور با موفقیت تغییر کرد. حالا وارد شوید.');
+            setShowReset(false);
+            setEmail(resetEmail);
+            setPassword('');
+            setResetEmail('');
+            setNewPassword('');
+            setNewPassword2('');
+        } catch (err) {
+            setError(err.message || 'خطا در بازیابی رمز عبور.');
+        } finally {
+            setResetLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
             <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
@@ -343,6 +387,11 @@ function LoginForm({ onSwitch }) {
                 {error && (
                     <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-right">
                         {error}
+                    </div>
+                )}
+                {resetMessage && (
+                    <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-right">
+                        {resetMessage}
                     </div>
                 )}
 
@@ -384,6 +433,73 @@ function LoginForm({ onSwitch }) {
                         {loading ? 'در حال ورود...' : 'ورود'}
                     </button>
                 </form>
+
+                <div className="mt-4 text-center">
+                    <button
+                        onClick={() => setShowReset(!showReset)}
+                        className="text-sm text-blue-600 font-medium hover:text-blue-700"
+                        type="button"
+                    >
+                        {showReset ? 'بستن بازیابی رمز' : 'فراموشی رمز عبور؟'}
+                    </button>
+                </div>
+
+                {showReset && (
+                    <form onSubmit={handleResetPassword} className="mt-5 space-y-4 border-t border-gray-200 pt-5">
+                        <h3 className="text-sm font-semibold text-gray-800 text-right">بازیابی رمز عبور</h3>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+                                ایمیل ثبت‌شده
+                            </label>
+                            <input
+                                type="email"
+                                value={resetEmail}
+                                onChange={(e) => setResetEmail(e.target.value)}
+                                required
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-right"
+                                placeholder="you@example.com"
+                                dir="ltr"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+                                رمز عبور جدید
+                            </label>
+                            <input
+                                type="password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                required
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-right"
+                                placeholder="••••••••"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+                                تکرار رمز عبور جدید
+                            </label>
+                            <input
+                                type="password"
+                                value={newPassword2}
+                                onChange={(e) => setNewPassword2(e.target.value)}
+                                required
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-right"
+                                placeholder="••••••••"
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={resetLoading}
+                            className="w-full bg-slate-800 text-white py-3 rounded-lg font-medium hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {resetLoading ? 'در حال ثبت...' : 'ثبت رمز جدید'}
+                        </button>
+                    </form>
+                )}
 
                 <div className="mt-6 text-center">
                     <p className="text-gray-600">

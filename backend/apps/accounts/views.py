@@ -6,7 +6,8 @@ from django.contrib.auth import get_user_model
 from .serializers import (
     UserRegistrationSerializer,
     UserSerializer,
-    UserProfileUpdateSerializer
+    UserProfileUpdateSerializer,
+    PasswordResetSerializer
 )
 
 User = get_user_model()
@@ -60,3 +61,15 @@ class LogoutView(APIView):
         # Simple logout - just return success
         # In production, you might want to implement token blacklisting
         return Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
+
+
+class PasswordResetView(generics.GenericAPIView):
+    """Reset password with registered email"""
+    serializer_class = PasswordResetSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "Password reset successful"}, status=status.HTTP_200_OK)

@@ -18,7 +18,8 @@ from billing.views import InvoiceViewSet, PaymentLinkViewSet
 from accounts.views import (
     UserRegistrationView,
     UserProfileView,
-    LogoutView
+    LogoutView,
+    PasswordResetView,
 )
 
 router = DefaultRouter()
@@ -36,6 +37,7 @@ urlpatterns = [
     path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/auth/logout/', LogoutView.as_view(), name='logout'),
     path('api/auth/profile/', UserProfileView.as_view(), name='user_profile'),
+    path('api/auth/reset-password/', PasswordResetView.as_view(), name='reset_password'),
 
     # API endpoints
     path('api/', include(router.urls)),
